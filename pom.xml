@@ -9,7 +9,7 @@
     <groupId>net.authorize</groupId>
     <artifactId>nr-anet-java-sdk</artifactId>
     <packaging>jar</packaging>
-    <version>1.9.1-SNAPSHOT</version>
+    <version>1.9.1.0-SNAPSHOT</version>
     <name>Authorize.Net Java SDK</name>
     <description>Authorize.Net SDK includes standard payments, recurring billing, and customer profiles.</description>
     <url>http://developer.authorize.net</url>
@@ -154,4 +154,16 @@
             </resource>
         </resources>
     </build>
+    <distributionManagement>
+        <repository>
+            <id>netradius-releases</id>
+            <name>Netradius Release Repository</name>
+            <url>https://mirrors.netradius.com/nexus/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>netradius-snapshots</id>
+            <name>Netradius Snapshots Repository</name>
+            <url>https://mirrors.netradius.com/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
