@@ -32,7 +32,10 @@ public abstract class ApiOperationBase<Q extends ANetApiRequest, S extends ANetA
 
 	private static Environment environment = null;
 	private static MerchantAuthenticationType merchantAuthentication = null;
-	
+
+	private Environment environmentOverride;
+	private MerchantAuthenticationType merchantAuthenticationOverride;
+
 	private Q apiRequest = null;
 	private S apiResponse = null;
 
@@ -40,9 +43,9 @@ public abstract class ApiOperationBase<Q extends ANetApiRequest, S extends ANetA
 	Class<S> responseClass = null;
 
 	private ANetApiResponse errorResponse = null;
-	
+
 	/**
-	 * 
+	 *
 	 */
 	@SuppressWarnings("unchecked")
 	protected ApiOperationBase(Q apiRequest) {
@@ -64,7 +67,6 @@ public abstract class ApiOperationBase<Q extends ANetApiRequest, S extends ANetA
 		
 		logger.debug(String.format("Creating instance for request:'%s' and response:'%s'", requestClass, responseClass));
 		logger.debug(String.format("Request:'%s'", apiRequest));
-		validate();
 	}
 	
 	protected Q getApiRequest() {
@@ -103,6 +105,14 @@ public abstract class ApiOperationBase<Q extends ANetApiRequest, S extends ANetA
 		ApiOperationBase.environment = environment;
 	}
 
+	public Environment getEnvironmentOverride() {
+		return environmentOverride;
+	}
+
+	public void setEnvironmentOverride(Environment environmentOverride) {
+		this.environmentOverride = environmentOverride;
+	}
+
 	public static MerchantAuthenticationType getMerchantAuthentication() {
 		return merchantAuthentication;
 	}
@@ -110,6 +120,14 @@ public abstract class ApiOperationBase<Q extends ANetApiRequest, S extends ANetA
 	public static void setMerchantAuthentication(
 			MerchantAuthenticationType merchantAuthentication) {
 		ApiOperationBase.merchantAuthentication = merchantAuthentication;
+	}
+
+	public MerchantAuthenticationType getMerchantAuthenticationOverride() {
+		return merchantAuthenticationOverride;
+	}
+
+	public void setMerchantAuthenticationOverride(MerchantAuthenticationType merchantAuthenticationOverride) {
+		this.merchantAuthenticationOverride = merchantAuthenticationOverride;
 	}
 
 	public S executeWithApiResponse() {
@@ -124,7 +142,10 @@ public abstract class ApiOperationBase<Q extends ANetApiRequest, S extends ANetA
 	final String nullEnvironmentErrorMessage = "Environment not set. Set environment using setter or use overloaded method to pass appropriate environment";
 
 	public void execute() {
-		if ( null == ApiOperationBase.getEnvironment())
+		if (environmentOverride != null) {
+			this.execute(environmentOverride);
+		}
+		else if ( null == ApiOperationBase.getEnvironment())
 		{
 			throw new InvalidParameterException(nullEnvironmentErrorMessage);
 		} 
@@ -135,6 +156,7 @@ public abstract class ApiOperationBase<Q extends ANetApiRequest, S extends ANetA
 	}
 	
 	public void execute(Environment environment) {
+		validate();
 		beforeExecute();
 
 		logger.debug(String.format("Executing Request:'%s'", this.getApiRequest()));
@@ -241,7 +263,10 @@ public abstract class ApiOperationBase<Q extends ANetApiRequest, S extends ANetA
 		ANetApiRequest request = this.getApiRequest();
 		if ( null == request.getMerchantAuthentication())
 		{
-			if ( null != ApiOperationBase.getMerchantAuthentication())
+			if (this.getMerchantAuthenticationOverride() != null) {
+				request.setMerchantAuthentication(this.getMerchantAuthenticationOverride());
+			}
+			else if ( null != ApiOperationBase.getMerchantAuthentication())
 			{
 				request.setMerchantAuthentication(ApiOperationBase.getMerchantAuthentication());
 			}
